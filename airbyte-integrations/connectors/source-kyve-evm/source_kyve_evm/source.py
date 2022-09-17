@@ -90,12 +90,25 @@ class EVM(HttpStream, IncrementalMixin):
 
 
 class SourceKyveEvm(AbstractSource):
+
+    valid_runtimes = ["@kyve/evm"]
+
     def check_connection(self, logger, config) -> Tuple[bool, any]:
-        pool_id_input = config["pool_id"]
-        if pool_id_input > 1:
-            return False, f"Input PoolID {pool_id_input} is invalid."
-        else:
-            return True, None
+        try:
+            pool_id_input = config["pool_id"]
+
+            response = requests.get(f"https://api.beta.kyve.network/kyve/query/v1beta1/pool/{pool_id_input}")
+            if response.ok:
+                runtime = response.json().get("pool").get("data").get("runtime")
+                if runtime in self.valid_runtimes:
+                    return True, None
+                else:
+                    return False, f"Runtime '{runtime}' is not supported."
+            else:
+                # todo improve error handling for cases like pool not found
+                return False, response.json()
+        except Exception as e:
+            return False, e
 
     def streams(self, config: Mapping[str, Any]) -> List[Stream]:
         return [EVM(pool_id=config["pool_id"])]
