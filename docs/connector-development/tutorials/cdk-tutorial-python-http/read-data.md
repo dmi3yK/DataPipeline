@@ -196,19 +196,22 @@ We'll implement the `stream_slices` method to return a list of the dates for whi
 
 ```python
     def _chunk_date_range(self, start_date: datetime) -> List[Mapping[str, Any]]:
-        """
-        Returns a list of each day between the start date and now.
-        The return value is a list of dicts {'date': date_string}.
-        """
-        dates = []
-        while start_date < datetime.now():
-            dates.append({self.cursor_field: start_date.strftime('%Y-%m-%d')})
-            start_date += timedelta(days=1)
-        return dates
+    """
+    Returns a list of each day between the start date and now.
+    The return value is a list of dicts {'date': date_string}.
+    """
+    dates = []
+    while start_date < datetime.now():
+        dates.append({self.cursor_field: start_date.strftime('%Y-%m-%d')})
+        start_date += timedelta(days=1)
+    return dates
 
-    def stream_slices(self, sync_mode, cursor_field: List[str] = None, stream_state: Mapping[str, Any] = None) -> Iterable[Optional[Mapping[str, Any]]]:
-        start_date = datetime.strptime(stream_state[self.cursor_field], '%Y-%m-%d') if stream_state and self.cursor_field in stream_state else self.start_date
-        return self._chunk_date_range(start_date)
+
+def stream_slices(self, sync_mode, cursor_field: List[str] = None, stream_state: Mapping[str, Any] = None) -> Iterable[
+    Optional[Mapping[str, Any]]]:
+    start_date = datetime.strptime(stream_state[self.cursor_field],
+                                   '%Y-%m-%d') if stream_state and self.cursor_field in stream_state else self.start_date
+    return self._construct_slices(start_date)
 ```
 
 Each slice will cause an HTTP request to be made to the API. We can then use the information present in the `stream_slice` parameter \(a single element from the list we constructed in `stream_slices` above\) to set other configurations for the outgoing request like `path` or `request_params`. For more info about stream slicing, see [the slicing docs](../../cdk-python/stream-slices.md).

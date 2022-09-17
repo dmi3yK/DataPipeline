@@ -470,24 +470,26 @@ Update internal state `cursor_value` inside `read_records` method
 
 This implementation compares the date from the latest record with the date in the current state and takes the maximum as the "new" state object.
 
-We'll implement the `stream_slices` method to return a list of the dates for which we should pull data based on the stream state if it exists: 
+We'll implement the `stream_slices` method to return a list of the dates for which we should pull data based on the stream state if it exists:
 
 ```python
  def _chunk_date_range(self, start_date: datetime) -> List[Mapping[str, any]]:
-        """
-        Returns a list of each day between the start date and now.
-        The return value is a list of dicts {'date': date_string}.
-        """
-        dates = []
-        while start_date < datetime.now():
-            dates.append({'date': start_date.strftime('%Y-%m-%d')})
-            start_date += timedelta(days=1)
-        return dates
+    """
+    Returns a list of each day between the start date and now.
+    The return value is a list of dicts {'date': date_string}.
+    """
+    dates = []
+    while start_date < datetime.now():
+        dates.append({'date': start_date.strftime('%Y-%m-%d')})
+        start_date += timedelta(days=1)
+    return dates
 
-    def stream_slices(self, sync_mode, cursor_field: List[str] = None, stream_state: Mapping[str, Any] = None) -> Iterable[
-        Optional[Mapping[str, any]]]:
-        start_date = datetime.strptime(stream_state['date'], '%Y-%m-%d') if stream_state and 'date' in stream_state else self.start_date
-        return self._chunk_date_range(start_date)
+
+def stream_slices(self, sync_mode, cursor_field: List[str] = None, stream_state: Mapping[str, Any] = None) -> Iterable[
+    Optional[Mapping[str, any]]]:
+    start_date = datetime.strptime(stream_state['date'],
+                                   '%Y-%m-%d') if stream_state and 'date' in stream_state else self.start_date
+    return self._construct_slices(start_date)
 ``` 
  
 Each slice will cause an HTTP request to be made to the API. We can then use the information present in the `stream_slice` parameter (a single element from the list we constructed in `stream_slices` above) to set other configurations for the outgoing request like `path` or `request_params`. For more info about stream slicing, see [the slicing docs](../concepts/stream_slices.md). 
