@@ -2,12 +2,12 @@
   "streams": [
     {
       "stream": {
-        "name": "pool",
+        "name": "evm",
         "json_schema": {
           "$schema": "http://json-schema.org/draft-04/schema#",
           "type": "object",
           "properties": {
-            "pokemon_name": {
+            "pool_id": {
               "type": "string"
             }
           }

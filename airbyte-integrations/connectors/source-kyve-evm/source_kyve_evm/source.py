@@ -72,11 +72,18 @@ class EVM(HttpStream, IncrementalMixin):
             yield record
 
     def _construct_slices(self, start_height: int) -> List[Mapping[str, Any]]:
-        dates = []
-        while start_height < 800:
-            dates.append({self.cursor_field: start_height})
-            start_height += 100
-        return dates
+        # todo: here is the problem of getting the next slice because we do not always hit the max_bundle_size
+        response = requests.get(f"https://api.beta.kyve.network/kyve/query/v1beta1/pool/{self.pool_id}")
+        if response.ok:
+            heights = []
+            latest_height = int(response.json().get("pool").get("data").get("current_height"))
+            while start_height < latest_height:
+                heights.append({self.cursor_field: start_height})
+                start_height += 100
+            return heights
+        else:
+            # todo error handling
+            pass
 
     def stream_slices(self, sync_mode, cursor_field: List[str] = None, stream_state: Mapping[str, Any] = None) -> Iterable[
         Optional[Mapping[str, Any]]]:
