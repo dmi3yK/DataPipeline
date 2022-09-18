@@ -7,10 +7,11 @@ from airbyte_cdk.sources.streams.http import HttpStream
 from airbyte_cdk.sources.streams import IncrementalMixin
 
 
-class EVM(HttpStream, IncrementalMixin):
-    url_base = "https://api.beta.kyve.network/kyve/query/v1beta1/finalized_bundle_by_height/"
+class EVM(HttpStream):
+    url_base = "https://api.beta.kyve.network/kyve/query/v1beta1/finalized_bundles/"
 
     cursor_field = "to_height"
+    page_size = 100
 
     # Set this as a noop.
     primary_key = None
@@ -25,7 +26,7 @@ class EVM(HttpStream, IncrementalMixin):
 
     def path(self, stream_state: Mapping[str, Any] = None, stream_slice: Mapping[str, Any] = None,
              next_page_token: Mapping[str, Any] = None) -> str:
-        return f"{self.pool_id}/{stream_slice[self.cursor_field]}"
+        return f"{self.pool_id}"
 
     def request_params(
             self,
@@ -34,9 +35,10 @@ class EVM(HttpStream, IncrementalMixin):
             next_page_token: Mapping[str, Any] = None,
     ) -> MutableMapping[str, Any]:
         # The api requires that we include the Pokemon name as a query param so we do that in this method.
-        # return {"pagination.key": self.next_page_token, "pagination.limit": 10}
-        # return {"pagination.key": "AAAAAAAAABQ=", "pagination.limit": 10}
-        return {}
+        params = {"pagination.limit": self.page_size}
+        if next_page_token:
+            params.update(**next_page_token)
+        return params
 
     def parse_response(
             self,
@@ -50,10 +52,12 @@ class EVM(HttpStream, IncrementalMixin):
         return [response.json()]
 
     def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
-        # While the PokeAPI does offer pagination, we will only ever retrieve one Pokemon with this implementation,
-        # so we just return None to indicate that there will never be any more pages in the response.
-        return None
+        json_response = response.json()
+        next_key = json_response.get("pagination", {}).get("next_key")
+        if next_key:
+            return {"pagination.key": next_key}
 
+    """
     @property
     def state(self) -> Mapping[str, Any]:
         if self._cursor_value:
@@ -94,10 +98,10 @@ class EVM(HttpStream, IncrementalMixin):
             start_height = 0
 
         return self._construct_slices(start_height)
+    """
 
 
 class SourceKyveEvm(AbstractSource):
-
     valid_runtimes = ["@kyve/evm"]
 
     def check_connection(self, logger, config) -> Tuple[bool, any]:
