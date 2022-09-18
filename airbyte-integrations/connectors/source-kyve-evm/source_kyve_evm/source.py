@@ -7,11 +7,12 @@ from airbyte_cdk.sources.streams.http import HttpStream
 from airbyte_cdk.sources.streams import IncrementalMixin
 
 
-class EVM(HttpStream):
+class EVM(HttpStream, IncrementalMixin):
     url_base = "https://api.beta.kyve.network/kyve/query/v1beta1/finalized_bundles/"
 
-    cursor_field = "to_height"
+    cursor_field = "offset"
     page_size = 100
+    offset = 0
 
     # Set this as a noop.
     primary_key = None
@@ -34,10 +35,16 @@ class EVM(HttpStream):
             stream_slice: Mapping[str, Any] = None,
             next_page_token: Mapping[str, Any] = None,
     ) -> MutableMapping[str, Any]:
-        # The api requires that we include the Pokemon name as a query param so we do that in this method.
+        # Set the pagesize in the request parameters
         params = {"pagination.limit": self.page_size}
+
+        # Handle pagination by inserting the next page's token in the request parameters
         if next_page_token:
             params.update(**next_page_token)
+        # In case we use incremental streaming, we start with the stored offset
+        if self.cursor_field in stream_state:
+            params.update({"pagination.offset": stream_state.get(self.cursor_field)})
+
         return params
 
     def parse_response(
@@ -55,15 +62,15 @@ class EVM(HttpStream):
         json_response = response.json()
         next_key = json_response.get("pagination", {}).get("next_key")
         if next_key:
-            return {"pagination.key": next_key}
+            self.offset += self.page_size
+            return {"pagination.offset": self.offset}
 
-    """
     @property
     def state(self) -> Mapping[str, Any]:
         if self._cursor_value:
             return {self.cursor_field: self._cursor_value}
         else:
-            return {self.cursor_field: 0}
+            return {self.cursor_field: None}
 
     @state.setter
     def state(self, value: Mapping[str, Any]):
@@ -71,34 +78,9 @@ class EVM(HttpStream):
 
     def read_records(self, *args, **kwargs) -> Iterable[Mapping[str, Any]]:
         for record in super().read_records(*args, **kwargs):
-            latest_record_date = record.get("finalized_bundle").get("to_height")
-            self._cursor_value = latest_record_date
+            latest_bundle = record.get("finalized_bundles")[-1]
+            self._cursor_value = latest_bundle.get("id")
             yield record
-
-    def _construct_slices(self, start_height: int) -> List[Mapping[str, Any]]:
-        # todo: here is the problem of getting the next slice because we do not always hit the max_bundle_size
-        response = requests.get(f"https://api.beta.kyve.network/kyve/query/v1beta1/pool/{self.pool_id}")
-        if response.ok:
-            heights = []
-            latest_height = int(response.json().get("pool").get("data").get("current_height"))
-            while start_height < latest_height:
-                heights.append({self.cursor_field: start_height})
-                start_height += 100
-            return heights
-        else:
-            # todo error handling
-            pass
-
-    def stream_slices(self, sync_mode, cursor_field: List[str] = None, stream_state: Mapping[str, Any] = None) -> Iterable[
-        Optional[Mapping[str, Any]]]:
-
-        if stream_state:
-            start_height = int(stream_state.get(self.cursor_field, 0))
-        else:
-            start_height = 0
-
-        return self._construct_slices(start_height)
-    """
 
 
 class SourceKyveEvm(AbstractSource):
