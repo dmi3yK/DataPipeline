@@ -12,7 +12,7 @@ from airbyte_cdk.sources.streams import IncrementalMixin
 class EVM(HttpStream, IncrementalMixin):
     url_base = "https://api.beta.kyve.network/kyve/query/v1beta1/finalized_bundles/"
 
-    cursor_field = "_offset"
+    cursor_field = "offset"
     page_size = 100
 
     # Set this as a noop.
@@ -59,27 +59,23 @@ class EVM(HttpStream, IncrementalMixin):
             stream_slice: Mapping[str, Any] = None,
             next_page_token: Mapping[str, Any] = None,
     ) -> Iterable[Mapping]:
-        # The response is a simple JSON whose schema matches our stream's schema exactly,
-        # so we just return a list containing the response.
-
+        # set the state to store the latest bundle_id
         latest_bundle = response.json().get("finalized_bundles")[-1]
         self._cursor_value = latest_bundle.get("id")
 
         r = []
-        length = len(response.json().get("finalized_bundles"))
-        i = 0
         for bundle in response.json().get("finalized_bundles"):
             storage_id = bundle.get("storage_id")
 
             # retrieve file from Arweave
             response_from_arweave = requests.get(f"https://arweave.net/{storage_id}")
             decompressed = gzip.decompress(response_from_arweave.content)
+            # TODO: Check for data hash -> sha256 of data
             decompressed_as_json = json.loads(decompressed)
+            # extract the value from the key -> value mapping
             for _ in decompressed_as_json:
                 r.append(_.get("value"))
 
-            print("I am here:", i, length)
-            i += 1
         return r
 
     def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
