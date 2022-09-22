@@ -1,4 +1,7 @@
+import base64
 import gzip
+import hashlib
+import hmac
 import json
 from typing import Any, Iterable, List, Mapping, MutableMapping, Optional, Tuple
 
@@ -70,7 +73,11 @@ class EVM(HttpStream, IncrementalMixin):
             # retrieve file from Arweave
             response_from_arweave = requests.get(f"https://arweave.net/{storage_id}")
             decompressed = gzip.decompress(response_from_arweave.content)
-            # TODO: Check for data hash -> sha256 of data
+            # todo this is only temporarily
+            bundle_hash = bundle.get("bundle_hash")
+            local_hash = hmac.new(b"", msg=decompressed, digestmod=hashlib.sha256).digest().hex()
+            # todo add real break
+            assert local_hash == bundle_hash, print("HASHES DO NOT MATCH")
             decompressed_as_json = json.loads(decompressed)
             # extract the value from the key -> value mapping
             for _ in decompressed_as_json:
@@ -118,4 +125,4 @@ class SourceKyveEvm(AbstractSource):
             return False, e
 
     def streams(self, config: Mapping[str, Any]) -> List[Stream]:
-        return [EVM(pool_id=config["pool_id"], start_id=5947)]
+        return [EVM(pool_id=config["pool_id"], start_id=6475)]
