@@ -5,5 +5,5 @@ plugins {
 }
 
 airbytePython {
-    moduleDirectory 'source_kyve_evm_singer'
+    moduleDirectory 'source_kyve'
 }

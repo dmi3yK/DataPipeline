@@ -1,7 +1,7 @@
-# Kyve Evm Source
+# Kyve Source
 
-This is the repository for the Kyve Evm source connector, written in Python.
-For information about how to use this connector within Airbyte, see [the documentation](https://docs.airbyte.io/integrations/sources/kyve-evm).
+This is the repository for the Kyve source connector, written in Python.
+For information about how to use this connector within Airbyte, see [the documentation](https://docs.airbyte.io/integrations/sources/kyve).
 
 ## Local development
 
@@ -21,6 +21,7 @@ development environment of choice. To activate it from the terminal, run:
 ```
 source .venv/bin/activate
 pip install -r requirements.txt
+pip install '.[tests]'
 ```
 If you are in an IDE, follow your IDE's instructions to activate the virtualenv.
 
@@ -30,18 +31,20 @@ If this is mumbo jumbo to you, don't worry about it, just put your deps in `setu
 should work as you expect.
 
 #### Building via Gradle
-From the Airbyte repository root, run:
+You can also build the connector in Gradle. This is typically used in CI and not needed for your development workflow.
+
+To build using Gradle, from the Airbyte repository root, run:
 ```
-./gradlew :airbyte-integrations:connectors:source-kyve-evm:build
+./gradlew :airbyte-integrations:connectors:source-kyve:build
 ```
 
 #### Create credentials
-**If you are a community contributor**, follow the instructions in the [documentation](https://docs.airbyte.io/integrations/sources/kyve-evm)
-to generate the necessary credentials. Then create a file `secrets/config.json` conforming to the `source_kyve_evm/spec.yaml` file.
-Note that the `secrets` directory is gitignored by default, so there is no danger of accidentally checking in sensitive information.
+**If you are a community contributor**, follow the instructions in the [documentation](https://docs.airbyte.io/integrations/sources/kyve)
+to generate the necessary credentials. Then create a file `secrets/config.json` conforming to the `source_kyve/spec.yaml` file.
+Note that any directory named `secrets` is gitignored across the entire Airbyte repo, so there is no danger of accidentally checking in sensitive information.
 See `integration_tests/sample_config.json` for a sample config file.
 
-**If you are an Airbyte core member**, copy the credentials in Lastpass under the secret name `source kyve-evm test creds`
+**If you are an Airbyte core member**, copy the credentials in Lastpass under the secret name `source kyve test creds`
 and place them into `secrets/config.json`.
 
 ### Locally running the connector
@@ -57,12 +60,12 @@ python main.py read --config secrets/config.json --catalog integration_tests/con
 #### Build
 First, make sure you build the latest Docker image:
 ```
-docker build . -t airbyte/source-kyve-evm:dev
+docker build . -t airbyte/source-kyve:dev
 ```
 
 You can also build the connector image via Gradle:
 ```
-./gradlew :airbyte-integrations:connectors:source-kyve-evm:airbyteDocker
+./gradlew :airbyte-integrations:connectors:source-kyve:airbyteDocker
 ```
 When building via Gradle, the docker image name and tag, respectively, are the values of the `io.airbyte.name` and `io.airbyte.version` `LABEL`s in
 the Dockerfile.
@@ -70,13 +73,13 @@ the Dockerfile.
 #### Run
 Then run any of the connector commands as follows:
 ```
-docker run --rm airbyte/source-kyve-evm:dev spec
-docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-kyve-evm:dev check --config /secrets/config.json
-docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-kyve-evm:dev discover --config /secrets/config.json
-docker run --rm -v $(pwd)/secrets:/secrets -v $(pwd)/integration_tests:/integration_tests airbyte/source-kyve-evm:dev read --config /secrets/config.json --catalog /integration_tests/configured_catalog.json
+docker run --rm airbyte/source-kyve:dev spec
+docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-kyve:dev check --config /secrets/config.json
+docker run --rm -v $(pwd)/secrets:/secrets airbyte/source-kyve:dev discover --config /secrets/config.json
+docker run --rm -v $(pwd)/secrets:/secrets -v $(pwd)/integration_tests:/integration_tests airbyte/source-kyve:dev read --config /secrets/config.json --catalog /integration_tests/configured_catalog.json
 ```
 ## Testing
-   Make sure to familiarize yourself with [pytest test discovery](https://docs.pytest.org/en/latest/goodpractices.html#test-discovery) to know how your test files and methods should be named.
+Make sure to familiarize yourself with [pytest test discovery](https://docs.pytest.org/en/latest/goodpractices.html#test-discovery) to know how your test files and methods should be named.
 First install test dependencies into your virtual environment:
 ```
 pip install .[tests]
@@ -107,11 +110,11 @@ To run your integration tests with docker
 All commands should be run from airbyte project root.
 To run unit tests:
 ```
-./gradlew :airbyte-integrations:connectors:source-kyve-evm:unitTest
+./gradlew :airbyte-integrations:connectors:source-kyve:unitTest
 ```
 To run acceptance and custom integration tests:
 ```
-./gradlew :airbyte-integrations:connectors:source-kyve-evm:integrationTest
+./gradlew :airbyte-integrations:connectors:source-kyve:integrationTest
 ```
 
 ## Dependency Management

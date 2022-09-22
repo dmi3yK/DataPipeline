@@ -1,6 +1,6 @@
 *
 !Dockerfile
 !main.py
-!source_kyve_evm
+!source_kyve
 !setup.py
 !secrets

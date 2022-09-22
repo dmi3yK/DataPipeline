@@ -6,8 +6,8 @@
 import sys
 
 from airbyte_cdk.entrypoint import launch
-from source_kyve_evm import SourceKyveEvm
+from source_kyve import SourceKyve
 
 if __name__ == "__main__":
-    source = SourceKyveEvm()
+    source = SourceKyve()
     launch(source, sys.argv[1:])

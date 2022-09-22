@@ -1,4 +1,3 @@
-import base64
 import gzip
 import hashlib
 import hmac
@@ -7,9 +6,9 @@ from typing import Any, Iterable, List, Mapping, MutableMapping, Optional, Tuple
 
 import requests
 from airbyte_cdk.sources import AbstractSource
+from airbyte_cdk.sources.streams import IncrementalMixin
 from airbyte_cdk.sources.streams import Stream
 from airbyte_cdk.sources.streams.http import HttpStream
-from airbyte_cdk.sources.streams import IncrementalMixin
 
 
 class EVM(HttpStream, IncrementalMixin):
@@ -104,7 +103,7 @@ class EVM(HttpStream, IncrementalMixin):
         self._cursor_value = value[self.cursor_field]
 
 
-class SourceKyveEvm(AbstractSource):
+class SourceKyve(AbstractSource):
     valid_runtimes = ["@kyve/evm"]
 
     def check_connection(self, logger, config) -> Tuple[bool, any]:

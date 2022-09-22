@@ -3,6 +3,6 @@
 #
 
 
-from .source import SourceKyveEvm
+from .source import SourceKyve
 
-__all__ = ["SourceKyveEvm"]
+__all__ = ["SourceKyve"]
