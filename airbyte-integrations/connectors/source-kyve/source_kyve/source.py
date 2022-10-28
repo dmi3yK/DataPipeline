@@ -61,9 +61,12 @@ class EVM(HttpStream, IncrementalMixin):
             stream_slice: Mapping[str, Any] = None,
             next_page_token: Mapping[str, Any] = None,
     ) -> Iterable[Mapping]:
-        # set the state to store the latest bundle_id
-        latest_bundle = response.json().get("finalized_bundles")[-1]
-        self._cursor_value = latest_bundle.get("id")
+        try:
+            # set the state to store the latest bundle_id
+            latest_bundle = response.json().get("finalized_bundles")[-1]
+            self._cursor_value = latest_bundle.get("id")
+        except IndexError:
+            return []
 
         r = []
         for bundle in response.json().get("finalized_bundles"):
@@ -72,11 +75,10 @@ class EVM(HttpStream, IncrementalMixin):
             # retrieve file from Arweave
             response_from_arweave = requests.get(f"https://arweave.net/{storage_id}")
             decompressed = gzip.decompress(response_from_arweave.content)
-            # todo this is only temporarily
-            bundle_hash = bundle.get("bundle_hash")
-            local_hash = hmac.new(b"", msg=decompressed, digestmod=hashlib.sha256).digest().hex()
-            # todo add real break
-            assert local_hash == bundle_hash, print("HASHES DO NOT MATCH")
+            # todo future: fail on incorrect hash, enabled after regenesis
+            # bundle_hash = bundle.get("bundle_hash")
+            # local_hash = hmac.new(b"", msg=decompressed, digestmod=hashlib.sha256).digest().hex()
+            # assert local_hash == bundle_hash, print("HASHES DO NOT MATCH")
             decompressed_as_json = json.loads(decompressed)
             # extract the value from the key -> value mapping
             for _ in decompressed_as_json:
@@ -105,6 +107,7 @@ class EVM(HttpStream, IncrementalMixin):
 
 class SourceKyve(AbstractSource):
     valid_runtimes = ["@kyve/evm"]
+    start_id = 0
 
     def check_connection(self, logger, config) -> Tuple[bool, any]:
         try:
@@ -114,6 +117,10 @@ class SourceKyve(AbstractSource):
             if response.ok:
                 runtime = response.json().get("pool").get("data").get("runtime")
                 if runtime in self.valid_runtimes:
+                    if not config["start_id"]:
+                        self.start_id = int(response.json().get("pool").get("data").get("total_bundles") - 1)
+                    else:
+                        self.start_id = config["start_id"]
                     return True, None
                 else:
                     return False, f"Runtime '{runtime}' is not supported."
@@ -124,4 +131,4 @@ class SourceKyve(AbstractSource):
             return False, e
 
     def streams(self, config: Mapping[str, Any]) -> List[Stream]:
-        return [EVM(pool_id=config["pool_id"], start_id=6475)]
+        return [EVM(pool_id=config["pool_id"], start_id=self.start_id)]

@@ -5,7 +5,7 @@
     "title": "KYVE Spec",
     "type": "object",
     "required": ["pool_id"],
-    "additionalProperties": false,
+    "additionalProperties": true,
     "properties": {
       "pool_id": {
         "type": "integer",

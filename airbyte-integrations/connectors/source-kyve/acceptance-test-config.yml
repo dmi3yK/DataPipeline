@@ -3,7 +3,7 @@
 connector_image: airbyte/source-kyve:dev
 tests:
   spec:
-    - spec_path: "source_kyve/spec.yaml"
+    - spec_path: "source_kyve/spec.json"
   connection:
     - config_path: "secrets/config.json"
       status: "succeed"
