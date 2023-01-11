@@ -1,0 +1,2 @@
+class Uniswap(Base):
+    pass
