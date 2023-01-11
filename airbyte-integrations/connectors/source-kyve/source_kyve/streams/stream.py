@@ -78,12 +78,7 @@ class KYVEStream(HttpStream, IncrementalMixin):
 
             # extract the value from the key -> value mapping
             for _ in decompressed_as_json:
-                v = self.parse_value(_.get("value"))
-                if isinstance(v, list):
-                    for entry in v:
-                        r.append(entry)
-                else:
-                    r.append(v)
+                r.append(_)
         return r
 
     def parse_value(self, value: Any) -> Mapping:
