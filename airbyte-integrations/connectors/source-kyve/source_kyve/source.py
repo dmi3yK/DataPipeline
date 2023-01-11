@@ -4,7 +4,7 @@ import requests
 from airbyte_cdk.sources import AbstractSource
 from airbyte_cdk.sources.streams import Stream
 
-from ..sources import runtime_mapping
+from streams import runtime_mapping
 
 
 class SourceKyve(AbstractSource):
