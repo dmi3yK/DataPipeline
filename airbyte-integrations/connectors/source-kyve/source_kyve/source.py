@@ -1,16 +1,11 @@
-import gzip
-import hashlib
-import hmac
-import json
-from typing import Any, Iterable, List, Mapping, MutableMapping, Optional, Tuple
+from typing import Any, List, Mapping, Tuple
 
 import requests
 from airbyte_cdk.sources import AbstractSource
-from airbyte_cdk.sources.streams import IncrementalMixin
 from airbyte_cdk.sources.streams import Stream
-from airbyte_cdk.sources.streams.http import HttpStream
 
-from .sources import runtime_mapping
+from ..sources import runtime_mapping
+
 
 class SourceKyve(AbstractSource):
     valid_runtimes = ["@kyvejs/evm", "@kyvejs/uniswap"]
@@ -26,7 +21,7 @@ class SourceKyve(AbstractSource):
                 runtime = response.json().get("pool").get("data").get("runtime")
                 self.runtime = runtime
                 if runtime in self.valid_runtimes:
-                    
+
                     self.start_id = int(response.json().get("pool").get("data").get("total_bundles")) - 1
 
                     return True, None

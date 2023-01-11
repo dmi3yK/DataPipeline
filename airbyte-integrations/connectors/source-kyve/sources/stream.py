@@ -1,3 +1,12 @@
+import gzip
+import json
+from typing import Any, Iterable, Mapping, MutableMapping, Optional
+
+import requests
+from airbyte_cdk.sources.streams import IncrementalMixin
+from airbyte_cdk.sources.streams.http import HttpStream
+
+
 class Base(HttpStream, IncrementalMixin):
     url_base = "https://api.korellia.kyve.network/kyve/query/v1beta1/finalized_bundles/"
 
@@ -66,7 +75,7 @@ class Base(HttpStream, IncrementalMixin):
             # local_hash = hmac.new(b"", msg=decompressed, digestmod=hashlib.sha256).digest().hex()
             # assert local_hash == bundle_hash, print("HASHES DO NOT MATCH")
             decompressed_as_json = json.loads(decompressed)
-            
+
             # extract the value from the key -> value mapping
             for _ in decompressed_as_json:
                 r.append(_.get("value"))
@@ -89,4 +98,3 @@ class Base(HttpStream, IncrementalMixin):
     @state.setter
     def state(self, value: Mapping[str, Any]):
         self._cursor_value = value[self.cursor_field]
-
