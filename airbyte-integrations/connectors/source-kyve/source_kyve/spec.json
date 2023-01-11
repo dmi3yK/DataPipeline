@@ -12,6 +12,12 @@
         "description": "Pool ID",
         "pattern": "^[0-9]*$",
         "examples": []
+      }, 
+      "start_id": {
+        "type": "integer",
+        "description": "Start ID (Optional)",
+        "pattern": "^[0-9]*$",
+        "examples": []
       }
     }
   }
