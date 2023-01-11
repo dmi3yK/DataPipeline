@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "finalized_bundles": {
+      "properties": {
+        "pool_id": {
+          "type": [
+            "null",
+            "integer"
+          ]
+        },
+        "id": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "storage_id": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "uploader": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "from_height": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "to_height": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "key": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "value": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "bundle_hash": {
+          "type": [
+            "null",
+            "string"
+          ]
+        },
+        "finalized_at": {
+          "type": [
+            "null",
+            "string"
+          ]
+        }
+      }
+    }
+  }
+}

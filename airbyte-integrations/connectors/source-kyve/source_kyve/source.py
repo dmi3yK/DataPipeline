@@ -4,7 +4,7 @@ import requests
 from airbyte_cdk.sources import AbstractSource
 from airbyte_cdk.sources.streams import Stream
 
-from streams import runtime_mapping
+from .streams import runtime_mapping
 
 
 class SourceKyve(AbstractSource):
@@ -34,5 +34,7 @@ class SourceKyve(AbstractSource):
             return False, e
 
     def streams(self, config: Mapping[str, Any]) -> List[Stream]:
-        Stream = runtime_mapping.get(self.runtime)
+        response = requests.get(f"https://api.korellia.kyve.network/kyve/query/v1beta1/pool/{config['pool_id']}")
+        runtime = response.json().get("pool").get("data").get("runtime")
+        Stream = runtime_mapping.get(runtime)
         return [Stream(pool_id=config["pool_id"], start_id=self.start_id)]
