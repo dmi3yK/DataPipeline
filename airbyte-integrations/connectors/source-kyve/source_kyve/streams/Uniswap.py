@@ -1,5 +1,5 @@
-from .stream import Base
+from .stream import KYVEStream
 
 
-class Uniswap(Base):
+class Uniswap(KYVEStream):
     pass

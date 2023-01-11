@@ -7,7 +7,7 @@ from airbyte_cdk.sources.streams import IncrementalMixin
 from airbyte_cdk.sources.streams.http import HttpStream
 
 
-class Base(HttpStream, IncrementalMixin):
+class KYVEStream(HttpStream, IncrementalMixin):
     url_base = "https://api.korellia.kyve.network/kyve/query/v1beta1/finalized_bundles/"
 
     cursor_field = "offset"
