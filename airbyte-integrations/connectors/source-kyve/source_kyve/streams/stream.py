@@ -79,12 +79,19 @@ class KYVEStream(HttpStream, IncrementalMixin):
             # extract the value from the key -> value mapping
             for _ in decompressed_as_json:
                 v = self.parse_value(_.get("value"))
-                r.append(v)
+                if isinstance(v, list):
+                    for entry in v:
+                        r.append(entry)
+                else:
+                    r.append(v)
         return r
 
     def parse_value(self, value: Any) -> Mapping:
-        if isinstance(value, dict):
+        """
+        if not isinstance(value, dict):
+
             raise TypeError("Value from bundle is not a dict, use 'parse_value' to parse to dict.")
+        """
         return value
 
     def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
