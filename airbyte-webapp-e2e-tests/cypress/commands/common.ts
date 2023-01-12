@@ -3,9 +3,7 @@ export const submitButtonClick = () => {
 };
 
 export const updateField = (field: string, value: string) => {
-  cy.get("input[name='" + field + "']")
-    .clear()
-    .type(value);
+  cy.get(`input[name='${field}']`).clear().type(value);
 };
 
 export const openSettingForm = (name: string) => {
@@ -26,4 +24,10 @@ export const clearApp = () => {
 
 export const fillEmail = (email: string) => {
   cy.get("input[name=email]").type(email);
+};
+
+// useful for ensuring that a name is unique from one test run to the next
+export const appendRandomString = (string: string) => {
+  const randomString = Math.random().toString(36).substring(2, 10);
+  return `${string} _${randomString}`;
 };
