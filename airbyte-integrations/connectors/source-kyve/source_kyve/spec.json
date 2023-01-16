@@ -18,6 +18,11 @@
         "description": "Start ID (Optional)",
         "pattern": "^[0-9]*$",
         "examples": []
+      },
+      "url_base": {
+        "type": "integer",
+        "description": "URL to the KYVE Chain API.",
+        "examples": []
       }
     }
   }

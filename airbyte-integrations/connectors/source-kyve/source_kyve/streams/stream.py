@@ -8,7 +8,7 @@ from airbyte_cdk.sources.streams.http import HttpStream
 
 
 class KYVEStream(HttpStream, IncrementalMixin):
-    url_base = "https://api.korellia.kyve.network/kyve/query/v1beta1/finalized_bundles/"
+    url_base = None
 
     cursor_field = "offset"
     page_size = 100
@@ -16,12 +16,12 @@ class KYVEStream(HttpStream, IncrementalMixin):
     # Set this as a noop.
     primary_key = None
 
-    def __init__(self, pool_id: int, start_id: int = 0, **kwargs):
+    def __init__(self, pool_id: int, offset: int, url_base: str, **kwargs):
         super().__init__(**kwargs)
         # Here's where we set the variable from our input to pass it down to the source.
         self.pool_id = pool_id
-
-        self._offset = start_id
+        self.url_base = url_base
+        self._offset = offset
 
         # For incremental querying
         self._cursor_value = None
@@ -80,14 +80,6 @@ class KYVEStream(HttpStream, IncrementalMixin):
             for _ in decompressed_as_json:
                 r.append(_)
         return r
-
-    def parse_value(self, value: Any) -> Mapping:
-        """
-        if not isinstance(value, dict):
-
-            raise TypeError("Value from bundle is not a dict, use 'parse_value' to parse to dict.")
-        """
-        return value
 
     def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
         json_response = response.json()

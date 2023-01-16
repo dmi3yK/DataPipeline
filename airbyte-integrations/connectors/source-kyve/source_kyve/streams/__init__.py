@@ -1,5 +1,5 @@
-from .EVM import EVM
-from .Uniswap import Uniswap
+from .evm import EVM
+from .uniswap import Uniswap
 
 runtime_mapping = {
     "@kyvejs/evm": EVM,
