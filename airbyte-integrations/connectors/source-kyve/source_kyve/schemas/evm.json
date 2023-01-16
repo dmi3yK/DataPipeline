@@ -1,70 +1,101 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "finalized_bundles": {
+    "key": {
+      "type": "integer"
+    },
+    "value": {
+      "type": "object",
       "properties": {
-        "pool_id": {
-          "type": [
-            "null",
-            "integer"
+        "hash": {
+          "type": "string"
+        },
+        "miner": {
+          "type": "string"
+        },
+        "number": {
+          "type": "integer"
+        },
+        "gasUsed": {
+          "type": "object",
+          "properties": {
+            "hex": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "hex",
+            "type"
           ]
         },
-        "id": {
-          "type": [
-            "null",
-            "string"
+        "gasLimit": {
+          "type": "object",
+          "properties": {
+            "hex": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "hex",
+            "type"
           ]
         },
-        "storage_id": {
-          "type": [
-            "null",
-            "string"
+        "extraData": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "integer"
+        },
+        "difficulty": {
+          "type": "integer"
+        },
+        "parentHash": {
+          "type": "string"
+        },
+        "_difficulty": {
+          "type": "object",
+          "properties": {
+            "hex": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "hex",
+            "type"
           ]
         },
-        "uploader": {
-          "type": [
-            "null",
-            "string"
-          ]
-        },
-        "from_height": {
-          "type": [
-            "null",
-            "string"
-          ]
-        },
-        "to_height": {
-          "type": [
-            "null",
-            "string"
-          ]
-        },
-        "key": {
-          "type": [
-            "null",
-            "string"
-          ]
-        },
-        "value": {
-          "type": [
-            "null",
-            "string"
-          ]
-        },
-        "bundle_hash": {
-          "type": [
-            "null",
-            "string"
-          ]
-        },
-        "finalized_at": {
-          "type": [
-            "null",
-            "string"
-          ]
+        "transactions": {
+          "type": "array",
+          "items": {}
         }
-      }
+      },
+      "required": [
+        "hash",
+        "miner",
+        "number",
+        "gasUsed",
+        "gasLimit",
+        "extraData",
+        "timestamp",
+        "difficulty",
+        "parentHash",
+        "_difficulty",
+        "transactions"
+      ]
     }
-  }
+  },
+  "required": [
+    "key",
+    "value"
+  ]
 }

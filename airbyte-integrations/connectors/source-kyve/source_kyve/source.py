@@ -5,11 +5,11 @@ from airbyte_cdk.sources import AbstractSource
 from airbyte_cdk.sources.streams import Stream
 
 from .streams import runtime_mapping
+from .streams.stream import KYVEStream
 
 
 class SourceKyve(AbstractSource):
     valid_runtimes = ["@kyvejs/evm", "@kyvejs/uniswap"]
-    start_id = 0
     runtime = ""
 
     def check_connection(self, logger, config) -> Tuple[bool, any]:
@@ -21,8 +21,6 @@ class SourceKyve(AbstractSource):
                 runtime = response.json().get("pool").get("data").get("runtime")
                 self.runtime = runtime
                 if runtime in self.valid_runtimes:
-
-                    self.start_id = int(response.json().get("pool").get("data").get("total_bundles")) - 1
 
                     return True, None
                 else:
@@ -36,5 +34,5 @@ class SourceKyve(AbstractSource):
     def streams(self, config: Mapping[str, Any]) -> List[Stream]:
         response = requests.get(f"https://api.korellia.kyve.network/kyve/query/v1beta1/pool/{config['pool_id']}")
         runtime = response.json().get("pool").get("data").get("runtime")
-        Stream = runtime_mapping.get(runtime)
-        return [Stream(pool_id=config["pool_id"], start_id=self.start_id)]
+        Stream = runtime_mapping.get(runtime, KYVEStream)
+        return [Stream(pool_id=config["pool_id"], start_id=config.get("start_id", 0))]
