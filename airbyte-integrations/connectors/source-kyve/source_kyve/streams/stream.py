@@ -11,7 +11,7 @@ class KYVEStream(HttpStream, IncrementalMixin):
     url_base = None
 
     cursor_field = "offset"
-    page_size = 100
+    page_size = 1
 
     # Set this as a noop.
     primary_key = None
@@ -82,11 +82,12 @@ class KYVEStream(HttpStream, IncrementalMixin):
         return r
 
     def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
-        json_response = response.json()
-        next_key = json_response.get("pagination", {}).get("next_key")
-        if next_key:
-            self._offset += self.page_size
-            return {"pagination.offset": self._offset}
+        if self._offset < 2 * self.page_size:
+            json_response = response.json()
+            next_key = json_response.get("pagination", {}).get("next_key")
+            if next_key:
+                self._offset += self.page_size
+                return {"pagination.offset": self._offset}
 
     @property
     def state(self) -> Mapping[str, Any]:
