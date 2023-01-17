@@ -28,7 +28,7 @@ class KYVEStream(HttpStream, IncrementalMixin):
 
     def path(self, stream_state: Mapping[str, Any] = None, stream_slice: Mapping[str, Any] = None,
              next_page_token: Mapping[str, Any] = None) -> str:
-        return f"{self.pool_id}"
+        return f"/kyve/query/v1beta1/finalized_bundles/{self.pool_id}"
 
     def request_params(
             self,
