@@ -6,7 +6,7 @@ from http import HTTPStatus
 from unittest.mock import MagicMock
 
 import pytest
-from source_kyve.source import KyveStream
+from source_kyve.source import KYVEStream as KyveStream
 
 
 @pytest.fixture

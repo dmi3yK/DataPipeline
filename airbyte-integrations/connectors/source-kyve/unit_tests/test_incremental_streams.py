@@ -5,7 +5,7 @@
 
 from airbyte_cdk.models import SyncMode
 from pytest import fixture
-from source_kyve.source import IncrementalKyveStream
+from source_kyve.source import KYVEStream as IncrementalKyveStream
 
 
 @fixture
