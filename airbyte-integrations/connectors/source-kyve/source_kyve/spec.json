@@ -11,7 +11,7 @@
     "properties": {
       "pool_id": {
         "type": "integer",
-        "title": "Pool ID",
+        "title": "Pool-ID",
         "description": "The ID of the KYVE storage pool you want to archive.",
         "pattern": "^[0-9]*$",
         "examples": []
@@ -30,7 +30,8 @@
         "description": "URL to the KYVE Chain API.",
         "default": "https://api.korellia.kyve.network",
         "examples": [
-          "https://api.korellia.kyve.network/kyve/query/v1beta1/finalized_bundles/"
+          "https://api.korellia.kyve.network/",
+          "https://api.beta.kyve.network/"
         ]
       }
     }
