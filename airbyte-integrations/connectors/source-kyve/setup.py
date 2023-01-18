@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2022 Airbyte, Inc., all rights reserved.
+# Copyright (c) 2023 BCP Innovations UG, all rights reserved.
 #
 
 
@@ -17,9 +17,9 @@ TEST_REQUIREMENTS = [
 
 setup(
     name="source_kyve",
-    description="Source implementation for Kyve.",
-    author="Airbyte",
-    author_email="contact@airbyte.io",
+    description="Source implementation for KYVE storage pools.",
+    author="BCP Innovations UG",
+    author_email="team@kyve.network",
     packages=find_packages(),
     install_requires=MAIN_REQUIREMENTS,
     package_data={"": ["*.json", "*.yaml", "schemas/*.json", "schemas/shared/*.json"]},
