@@ -76,7 +76,9 @@
         },
         "transactions": {
           "type": "array",
-          "items": {}
+          "items": {
+            "$ref": "evm_transaction.json"
+          }
         }
       },
       "required": [

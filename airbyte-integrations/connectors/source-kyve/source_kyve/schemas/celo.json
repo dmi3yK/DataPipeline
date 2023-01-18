@@ -1,77 +1,91 @@
 {
-  "$schema": "http://json-schema.org/draft-04/schema#",
-  "type": "object",
-  "properties": {
-    "hash": {
-      "type": "string"
+  "$schema" : "http://json-schema.org/draft-04/schema#",
+  "type" : "object",
+  "properties" : {
+    "key" : {
+      "type" : "integer"
     },
-    "parentHash": {
-      "type": "string"
-    },
-    "number": {
-      "type": "integer"
-    },
-    "timestamp": {
-      "type": "integer"
-    },
-    "nonce": {
-      "type": "string"
-    },
-    "difficulty": {
-      "type": "integer"
-    },
-    "gasLimit": {
-      "type": "object",
-      "properties": {
-        "type": {
-          "type": "string"
+    "value" : {
+      "type" : "object",
+      "properties" : {
+        "hash" : {
+          "type" : "string"
         },
-        "hex": {
-          "type": "string"
+        "parentHash" : {
+          "type" : "string"
+        },
+        "number" : {
+          "type" : "integer"
+        },
+        "timestamp" : {
+          "type" : "integer"
+        },
+        "nonce" : {
+          "type" : "string"
+        },
+        "difficulty" : {
+          "type" : "integer"
+        },
+        "gasLimit" : {
+          "type" : "object",
+          "properties" : {
+            "type" : {
+              "type" : "string"
+            },
+            "hex" : {
+              "type" : "string"
+            }
+          },
+          "required" : [
+            "type",
+            "hex"
+          ]
+        },
+        "gasUsed" : {
+          "type" : "object",
+          "properties" : {
+            "type" : {
+              "type" : "string"
+            },
+            "hex" : {
+              "type" : "string"
+            }
+          },
+          "required" : [
+            "type",
+            "hex"
+          ]
+        },
+        "miner" : {
+          "type" : "string"
+        },
+        "transactions" : {
+          "type" : "array",
+          "items" : {
+          "$ref": "celo_transaction.json"
+          }
+        },
+        "_difficulty" : {
+          "type" : "null"
         }
       },
-      "required": [
-        "type",
-        "hex"
+      "required" : [
+        "hash",
+        "parentHash",
+        "number",
+        "timestamp",
+        "nonce",
+        "difficulty",
+        "gasLimit",
+        "gasUsed",
+        "miner",
+        "transactions",
+        "_difficulty"
       ]
-    },
-    "gasUsed": {
-      "type": "object",
-      "properties": {
-        "type": {
-          "type": "string"
-        },
-        "hex": {
-          "type": "string"
-        }
-      },
-      "required": [
-        "type",
-        "hex"
-      ]
-    },
-    "miner": {
-      "type": "string"
-    },
-    "transactions": {
-      "type": "array",
-      "items": {}
-    },
-    "_difficulty": {
-      "type": "null"
     }
   },
-  "required": [
-    "hash",
-    "parentHash",
-    "number",
-    "timestamp",
-    "nonce",
-    "difficulty",
-    "gasLimit",
-    "gasUsed",
-    "miner",
-    "transactions",
-    "_difficulty"
+  "required" : [
+    "key",
+    "value"
   ]
 }
