@@ -1,6 +1,7 @@
 # See [Source Acceptance Tests](https://docs.airbyte.com/connector-development/testing-connectors/source-acceptance-tests-reference)
 # for more information about how to configure these tests
 connector_image: airbyte/source-kyve:dev
+test_strictness_level: high
 acceptance_tests:
   spec:
     tests:
@@ -17,12 +18,10 @@ acceptance_tests:
   basic_read:
     tests:
       - config_path: "secrets/config.json"
-        configured_catalog_path: "integration_tests/configured_catalog.json"
         timeout_seconds: 60
   full_refresh:
     tests:
       - config_path: "secrets/config.json"
-        configured_catalog_path: "integration_tests/configured_catalog.json"
   incremental:
     tests:
       - config_path: "secrets/config.json"

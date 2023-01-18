@@ -30,4 +30,4 @@ class SourceKyve(AbstractSource):
         # select a typed stream from the mapping, if no typed mapping exists, fall back to default
         KYVE_TYPED_Stream = runtime_mapping.get(runtime, KYVEStream)
 
-        return [KYVE_TYPED_Stream(pool_id=config["pool_id"], offset=config.get("start_id", 0), url_base=config.get("url_base"))]
+        return [KYVE_TYPED_Stream(config=config)]
