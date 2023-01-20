@@ -255,7 +255,7 @@
                     "parsed_txs" : {
                       "type" : "array",
                       "items" : {
-                        "items" : {}
+                        "$ref" : "cosmos_parsedtxs.json"
                       }
                     }
                   },
