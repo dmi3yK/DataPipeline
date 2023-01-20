@@ -1,5 +1,5 @@
 {
-  "documentationUrl": "https://docs.airbyte.io/integrations/sources/pokeapi",
+  "documentationUrl": "https://docs.kyve.network/developers/accessing-data/using-the-elt-pipeline/",
   "connectionSpecification": {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "title": "KYVE Spec",
@@ -33,6 +33,17 @@
           "https://api.korellia.kyve.network/",
           "https://api.beta.kyve.network/"
         ]
+      },
+      "max_pages": {
+        "type": "integer",
+        "description": "The maximum amount of pages to go trough. Set to 'null' for all pages.",
+        "airbyte_hidden": true
+      },
+      "page_size": {
+        "type": "integer",
+        "description": "The pagesize for pagination, smaller numbers are used in integration tests.",
+        "default": 100,
+        "airbyte_hidden": true
       }
     }
   }

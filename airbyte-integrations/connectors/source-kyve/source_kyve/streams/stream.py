@@ -16,13 +16,15 @@ class KYVEStream(HttpStream, IncrementalMixin):
     # Set this as a noop.
     primary_key = None
 
-    def __init__(self, pool_id: int, offset: int, url_base: str, **kwargs):
+    def __init__(self, config: Mapping[str, Any], **kwargs):
         super().__init__(**kwargs)
         # Here's where we set the variable from our input to pass it down to the source.
-        self.pool_id = pool_id
-        self.url_base = url_base
-        self._offset = offset
+        self.pool_id = config["pool_id"]
+        self.url_base = config["url_base"]
+        self._offset = config["start_id"]
 
+        self.page_size = config["page_size"]
+        self.max_pages = config.get("max_pages", None)
         # For incremental querying
         self._cursor_value = None
 
@@ -82,6 +84,10 @@ class KYVEStream(HttpStream, IncrementalMixin):
         return r
 
     def next_page_token(self, response: requests.Response) -> Optional[Mapping[str, Any]]:
+        # in case we set a max_pages parameter we need to abort
+        if self.max_pages and self._offset >= self.max_pages * self.page_size:
+            return
+
         json_response = response.json()
         next_key = json_response.get("pagination", {}).get("next_key")
         if next_key:

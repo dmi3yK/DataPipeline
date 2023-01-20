@@ -1,3 +1,5 @@
 {
-  "pool_id": 0
+  "pool_id": 0,
+  "start_id": 0,
+  "url_base":  "https://api.korellia.kyve.network"
 }
