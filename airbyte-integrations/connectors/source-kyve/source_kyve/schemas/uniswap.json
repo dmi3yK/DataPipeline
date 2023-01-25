@@ -1,70 +1,66 @@
 {
-  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
-    "finalized_bundles": {
-      "properties": {
-        "pool_id": {
-          "type": [
-            "null",
-            "integer"
-          ]
+    "key": {
+      "type": "string"
+    },
+    "value": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "blockNumber": {
+            "type": "integer"
+          },
+          "blockHash": {
+            "type": "string"
+          },
+          "transactionIndex": {
+            "type": "integer"
+          },
+          "removed": {
+            "type": "boolean"
+          },
+          "address": {
+            "type": "string"
+          },
+          "data": {
+            "type": "string"
+          },
+          "topics": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "transactionHash": {
+            "type": "string"
+          },
+          "logIndex": {
+            "type": "integer"
+          },
+          "parsedEvent": {
+            "type": "object"
+          }
         },
-        "id": {
-          "type": [
-            "null",
-            "string"
-          ]
-        },
-        "storage_id": {
-          "type": [
-            "null",
-            "string"
-          ]
-        },
-        "uploader": {
-          "type": [
-            "null",
-            "string"
-          ]
-        },
-        "from_height": {
-          "type": [
-            "null",
-            "string"
-          ]
-        },
-        "to_height": {
-          "type": [
-            "null",
-            "string"
-          ]
-        },
-        "key": {
-          "type": [
-            "null",
-            "string"
-          ]
-        },
-        "value": {
-          "type": [
-            "null",
-            "string"
-          ]
-        },
-        "bundle_hash": {
-          "type": [
-            "null",
-            "string"
-          ]
-        },
-        "finalized_at": {
-          "type": [
-            "null",
-            "string"
-          ]
-        }
+        "required": [
+          "blockNumber",
+          "blockHash",
+          "transactionIndex",
+          "removed",
+          "address",
+          "data",
+          "topics",
+          "transactionHash",
+          "logIndex",
+          "parsedEvent"
+        ]
       }
     }
-  }
+  },
+  "required": [
+    "key",
+    "value"
+  ]
 }
