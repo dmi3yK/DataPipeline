@@ -2,4 +2,4 @@ from .stream import KYVEStream
 
 
 class EVM(KYVEStream):
-    pass
+    schema_root_file = "evm/block"

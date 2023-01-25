@@ -4,7 +4,10 @@ from typing import Any, Iterable, Mapping, MutableMapping, Optional
 
 import requests
 from airbyte_cdk.sources.streams import IncrementalMixin
+from airbyte_cdk.sources.streams.core import package_name_from_class
 from airbyte_cdk.sources.streams.http import HttpStream
+
+from source_kyve.util import CustomResourceSchemaLoader
 
 
 class KYVEStream(HttpStream, IncrementalMixin):
@@ -15,6 +18,8 @@ class KYVEStream(HttpStream, IncrementalMixin):
 
     # Set this as a noop.
     primary_key = None
+
+    schema_root_file = None
 
     def __init__(self, config: Mapping[str, Any], **kwargs):
         super().__init__(**kwargs)
@@ -27,6 +32,30 @@ class KYVEStream(HttpStream, IncrementalMixin):
         self.max_pages = config.get("max_pages", None)
         # For incremental querying
         self._cursor_value = None
+
+    def get_json_schema(self) -> Mapping[str, Any]:
+        # this is KYVE's default schema, if a root_schema is defined
+        # the ResourceSchemaLoader automatically resolves the dependency
+        schema = {
+            "$schema": "http://json-schema.org/draft-04/schema#",
+            "type": "object",
+            "properties": {
+                "key": {
+                    "type": "integer"
+                },
+                "value": {
+                    "type": "object"
+                }
+            },
+            "required": [
+                "key",
+                "value"
+            ]
+        }
+        if self.schema_root_file:
+            inlay_schema = CustomResourceSchemaLoader(package_name_from_class(self.__class__)).get_schema(self.schema_root_file)
+            schema['properties']['value'] = inlay_schema
+        return schema
 
     def path(self, stream_state: Mapping[str, Any] = None, stream_slice: Mapping[str, Any] = None,
              next_page_token: Mapping[str, Any] = None) -> str:
